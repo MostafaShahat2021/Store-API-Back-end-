@@ -1,5 +1,6 @@
-const express = require("express");
 require("dotenv").config();
+require("express-async-errors")
+const express = require("express");
 const port = process.env.PORT || 3000;
 const app = express();
 const connectDB = require("./db/connect");
