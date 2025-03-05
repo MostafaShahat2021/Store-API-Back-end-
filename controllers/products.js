@@ -16,7 +16,7 @@ const getAllProducts = async (req, res) => {
   // console.log(req.query); // ~/products?featured=true
   // Sort ~/products?sort=name
 
-  const { featured, company, name } = req.query;
+  const { featured, company, name, sort } = req.query;
   const queryObject = {};
   if (featured) {
     queryObject.featured = featured === "true" ? true : false;
@@ -27,9 +27,19 @@ const getAllProducts = async (req, res) => {
   if (name) {
     queryObject.name = { $regex: name, $options: "i" };
   }
-  console.log(queryObject);
-  const products = await Product.find(queryObject);
+  // console.log(queryObject);
 
+  // sort products please notice the syntax on line 11
+  let result = Product.find(queryObject);
+  if (sort) {
+    console.log(sort);
+    const sortList = sort.split(",").join(" ");
+    result = result.sort(sortList);
+  } else {
+    // Default sort field is 'createdAt'
+    result = result.sort("createdAt");
+  }
+  const products = await result;
   res.status(200).json({ success: true, count: products.length, products });
 };
 
