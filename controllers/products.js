@@ -8,7 +8,8 @@ const getAllProductsStatic = async (req, res) => {
   // const products = await Product.find({ featured: true }); // get products by special criteria
   // const products = await Product.find({ name: "vase table" }); // get products by special criteria
 
-  const products = await Product.find({}).sort("-name price"); // sort products from z to a and price from small to larg
+  // const products = await Product.find({}).sort("-name price"); // sort products from z to a and price from small to larg
+  const products = await Product.find({}).select("name price"); // serach for certain fields or select wiche fields to show in the products object
   res.status(200).json({ nbHits: products.length, products });
 };
 
@@ -16,7 +17,7 @@ const getAllProducts = async (req, res) => {
   // console.log(req.query); // ~/products?featured=true
   // Sort ~/products?sort=name
 
-  const { featured, company, name, sort } = req.query;
+  const { featured, company, name, sort, fields } = req.query;
   const queryObject = {};
   if (featured) {
     queryObject.featured = featured === "true" ? true : false;
@@ -31,13 +32,19 @@ const getAllProducts = async (req, res) => {
 
   // sort products please notice the syntax on line 11
   let result = Product.find(queryObject);
+  //sort
   if (sort) {
-    console.log(sort);
+    // console.log(sort);
     const sortList = sort.split(",").join(" ");
     result = result.sort(sortList);
   } else {
     // Default sort field is 'createdAt'
     result = result.sort("createdAt");
+  }
+  // select (fields)
+  if(fields){
+    const fieldsList = fields.split(",").join(" ")
+    result = result.select(fieldsList)
   }
   const products = await result;
   res.status(200).json({ success: true, count: products.length, products });
