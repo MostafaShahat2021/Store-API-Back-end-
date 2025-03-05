@@ -22,6 +22,10 @@ const productsSchema = new mongoose.Schema(
       },
       // enum: ["ikea", "liddy", "caressa", "marcos"],
     },
+    rating:{
+      type: Number,
+      default: 4.9
+    },
   },
   { timestamps: true }
 );
